@@ -31,6 +31,8 @@ export async function initDB() {
     );
 
     ALTER TABLE wardrobe_items ADD COLUMN IF NOT EXISTS rotation INTEGER DEFAULT 0;
+    ALTER TABLE schedules ADD COLUMN IF NOT EXISTS start_date DATE;
+    ALTER TABLE schedules ADD COLUMN IF NOT EXISTS start_week_idx INTEGER DEFAULT 0;
 
     CREATE TABLE IF NOT EXISTS schedules (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -4,18 +4,25 @@ import styles from './Schedule.module.css';
 
 export default function Schedule() {
   const [schedule, setSchedule] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [startWeekIdx, setStartWeekIdx] = useState(0);
   const [wardrobe, setWardrobe] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [activeWeek, setActiveWeek] = useState(0);
   const [error, setError] = useState('');
+  const [startModal, setStartModal] = useState(false);
+  const [selectedWeek, setSelectedWeek] = useState(0);
+  const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     Promise.all([
       api.get('/api/schedule'),
       api.get('/api/wardrobe')
     ]).then(([s, w]) => {
-      setSchedule(s.data);
+      setSchedule(s.data.schedule);
+      setStartDate(s.data.startDate);
+      setStartWeekIdx(s.data.startWeekIdx ?? 0);
       setWardrobe(w.data);
     }).finally(() => setLoading(false));
   }, []);
@@ -26,11 +33,25 @@ export default function Schedule() {
     setGenerating(true); setError('');
     try {
       const r = await api.post('/api/schedule/generate');
-      setSchedule(r.data);
+      setSchedule(r.data.schedule);
+      setStartDate(null);
+      setStartWeekIdx(0);
       setActiveWeek(0);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to generate schedule');
     } finally { setGenerating(false); }
+  };
+
+  const handleStart = async () => {
+    setStarting(true);
+    try {
+      const r = await api.patch('/api/schedule/start', { startWeekIdx: selectedWeek });
+      setStartDate(r.data.startDate);
+      setStartWeekIdx(r.data.startWeekIdx);
+      setStartModal(false);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to start schedule');
+    } finally { setStarting(false); }
   };
 
   if (loading) return <div className="empty-state"><span className="spinner" /></div>;
@@ -47,10 +68,28 @@ export default function Schedule() {
           <h1 className={styles.title}>Outfit schedule</h1>
           <p className={styles.sub}>Mon–Fri · each top worn twice then washed</p>
         </div>
-        <button className="btn btn-primary" onClick={generate} disabled={generating}>
-          {generating ? <><span className="spinner" /> Generating…</> : '✦ Generate schedule'}
-        </button>
+        <div className={styles.headerBtns}>
+          {schedule && !startDate && (
+            <button className="btn" onClick={() => { setSelectedWeek(0); setStartModal(true); }}>
+              ▶ Start schedule
+            </button>
+          )}
+          {schedule && startDate && (
+            <button className="btn" onClick={() => { setSelectedWeek(startWeekIdx); setStartModal(true); }}>
+              ↺ Change start
+            </button>
+          )}
+          <button className="btn btn-primary" onClick={generate} disabled={generating}>
+            {generating ? <><span className="spinner" /> Generating…</> : '✦ Generate'}
+          </button>
+        </div>
       </div>
+
+      {startDate && (
+        <div className={styles.startBanner}>
+          Schedule started from <strong>Week {startWeekIdx + 1}</strong> on <strong>{new Date(startDate).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}</strong> · Check the <a href="/today">Today tab</a> to see what to wear
+        </div>
+      )}
 
       {error && <div className={styles.error}>{error}</div>}
 
@@ -58,7 +97,7 @@ export default function Schedule() {
         <div className="empty-state">
           <div className="empty-icon">🗓</div>
           <div className="empty-title">No schedule yet</div>
-          <div>Add your clothes then click "Generate schedule"</div>
+          <div>Add your clothes then click "Generate"</div>
         </div>
       ) : (
         <>
@@ -98,6 +137,29 @@ export default function Schedule() {
             })}
           </div>
         </>
+      )}
+
+      {startModal && (
+        <div className={styles.overlay} onClick={e => e.target === e.currentTarget && setStartModal(false)}>
+          <div className={styles.modal}>
+            <h2 className={styles.modalTitle}>Start schedule</h2>
+            <p className={styles.modalSub}>Pick which week to begin from. Today's date will be set as day 1 of that week.</p>
+            <div className="form-group">
+              <label className="form-label">Starting week</label>
+              <select className="form-select" value={selectedWeek} onChange={e => setSelectedWeek(Number(e.target.value))}>
+                {schedule.map((w, i) => (
+                  <option key={i} value={i}>Week {w.weekNum}</option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.modalActions}>
+              <button className="btn" onClick={() => setStartModal(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleStart} disabled={starting}>
+                {starting ? <><span className="spinner" /> Starting…</> : 'Start'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -98,7 +98,8 @@ These commands and notes should work on PowerShell (Windows) or any other shell.
 | `CLOUDINARY_API_KEY` | From Cloudinary dashboard |
 | `CLOUDINARY_API_SECRET` | From Cloudinary dashboard |
 | `FRONTEND_URL` | Set after deploying frontend (e.g. `https://wardrobe.vercel.app`) |
-| `NODE_VERSION` | `20` |
+| `NODE_VERSION` | `
+` |
 
 7. Click **Deploy**
 8. Wait ~2 min. Copy your Render URL (e.g. `https://wardrobe-backend.onrender.com`)

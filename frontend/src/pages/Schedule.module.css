@@ -1,4 +1,12 @@
-.header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 12px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+.headerBtns { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+.startBanner { background: #e8f4fd; border: 1px solid #b6d9f5; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #0a4d7a; margin-bottom: 16px; }
+.startBanner a { color: #0a4d7a; font-weight: 600; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal { background: var(--surface); border-radius: 14px; padding: 24px; width: min(400px, 100%); }
+.modalTitle { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.modalSub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.modalActions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
 .title { font-size: 20px; font-weight: 600; }
 .sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
 

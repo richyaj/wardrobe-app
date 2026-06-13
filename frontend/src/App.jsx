@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Wardrobe from './pages/Wardrobe';
 import Schedule from './pages/Schedule';
+import Today from './pages/Today';
 import Layout from './components/Layout';
 
 function Protected({ children }) {
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/" element={<Protected><Layout /></Protected>}>
             <Route index element={<Wardrobe />} />
             <Route path="schedule" element={<Schedule />} />
+            <Route path="today" element={<Today />} />
           </Route>
         </Routes>
       </BrowserRouter>

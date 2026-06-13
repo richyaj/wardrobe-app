@@ -58,8 +58,27 @@ function generateScheduleLocally(tops, bottoms) {
 }
 
 router.get('/', auth, async (req, res) => {
-  const { rows } = await pool.query('SELECT data FROM schedules WHERE user_id=$1', [req.user.id]);
-  res.json(rows[0]?.data || null);
+  const { rows } = await pool.query(
+    'SELECT data, start_date, start_week_idx FROM schedules WHERE user_id=$1',
+    [req.user.id]
+  );
+  if (!rows[0]) return res.json({ schedule: null, startDate: null, startWeekIdx: 0 });
+  res.json({
+    schedule: rows[0].data,
+    startDate: rows[0].start_date,
+    startWeekIdx: rows[0].start_week_idx ?? 0
+  });
+});
+
+router.patch('/start', auth, async (req, res) => {
+  const { startWeekIdx } = req.body;
+  const { rows } = await pool.query(
+    `UPDATE schedules SET start_date = CURRENT_DATE, start_week_idx = $1
+     WHERE user_id = $2 RETURNING start_date, start_week_idx`,
+    [startWeekIdx ?? 0, req.user.id]
+  );
+  if (!rows[0]) return res.status(404).json({ error: 'No schedule found. Generate one first.' });
+  res.json({ startDate: rows[0].start_date, startWeekIdx: rows[0].start_week_idx });
 });
 
 router.post('/generate', auth, async (req, res) => {
@@ -127,7 +146,7 @@ Return ONLY a valid JSON array, no markdown fences, no explanation:
     [req.user.id, JSON.stringify(data)]
   );
 
-  res.json(data);
+  res.json({ schedule: data, startDate: null, startWeekIdx: 0 });
 });
 
 export default router;

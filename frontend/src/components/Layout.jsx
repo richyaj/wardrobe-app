@@ -19,6 +19,9 @@ export default function Layout() {
           <NavLink to="/schedule" className={({ isActive }) => isActive ? `${styles.navTab} ${styles.active}` : styles.navTab}>
             Schedule
           </NavLink>
+          <NavLink to="/today" className={({ isActive }) => isActive ? `${styles.navTab} ${styles.active}` : styles.navTab}>
+            Today
+          </NavLink>
         </div>
         <div className={styles.userArea}>
           <span className={styles.userName}>{user?.name}</span>
