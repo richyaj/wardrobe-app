@@ -16,6 +16,7 @@ export default function Wardrobe() {
   const [imgPreview, setImgPreview] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [viewer, setViewer] = useState(null); // { item }
   const fileRef = useRef();
 
   useEffect(() => {
@@ -59,6 +60,19 @@ export default function Wardrobe() {
     if (!confirm('Remove this item?')) return;
     await api.delete(`/api/wardrobe/${id}`);
     setItems(prev => prev.filter(i => i.id !== id));
+    if (viewer?.item.id === id) setViewer(null);
+  };
+
+  const openViewer = item => setViewer({ item });
+
+  const handleRotate = async (dir) => {
+    const item = viewer.item;
+    const current = item.rotation ?? 0;
+    const next = ((current + dir) + 360) % 360;
+    const updated = { ...item, rotation: next };
+    setViewer({ item: updated });
+    setItems(prev => prev.map(i => i.id === item.id ? updated : i));
+    await api.patch(`/api/wardrobe/${item.id}`, { rotation: next });
   };
 
   return (
@@ -92,7 +106,16 @@ export default function Wardrobe() {
           {filtered.map(item => (
             <div key={item.id} className={styles.card}>
               {item.image_url
-                ? <img src={item.image_url} alt={item.name} className={styles.cardImg} />
+                ? (
+                  <div className={styles.cardImgWrap} onClick={() => openViewer(item)}>
+                    <img
+                      src={item.image_url}
+                      alt={item.name}
+                      className={styles.cardImg}
+                      style={{ transform: `rotate(${item.rotation ?? 0}deg)` }}
+                    />
+                  </div>
+                )
                 : <div className={styles.cardPlaceholder}>👕</div>
               }
               <button className={styles.deleteBtn} onClick={() => handleDelete(item.id)}>✕</button>
@@ -106,6 +129,35 @@ export default function Wardrobe() {
         </div>
       )}
 
+      {/* Image viewer with rotation */}
+      {viewer && (
+        <div className={styles.overlay} onClick={e => e.target === e.currentTarget && setViewer(null)}>
+          <div className={styles.viewerModal}>
+            <div className={styles.viewerHeader}>
+              <span className={styles.viewerName}>{viewer.item.name}</span>
+              <button className={styles.viewerClose} onClick={() => setViewer(null)}>✕</button>
+            </div>
+            <div className={styles.viewerImgWrap}>
+              <img
+                src={viewer.item.image_url}
+                alt={viewer.item.name}
+                className={styles.viewerImg}
+                style={{ transform: `rotate(${viewer.item.rotation ?? 0}deg)` }}
+              />
+            </div>
+            <div className={styles.viewerActions}>
+              <button className={styles.rotateBtn} onClick={() => handleRotate(-90)} title="Rotate left">↺</button>
+              <span className={styles.rotateLabel}>{viewer.item.rotation ?? 0}°</span>
+              <button className={styles.rotateBtn} onClick={() => handleRotate(90)} title="Rotate right">↻</button>
+            </div>
+            <div className={styles.viewerFooter}>
+              <button className={styles.deleteBtnViewer} onClick={() => handleDelete(viewer.item.id)}>Remove item</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add item modal */}
       {modal && (
         <div className={styles.overlay} onClick={e => e.target === e.currentTarget && setModal(false)}>
           <div className={styles.modal}>

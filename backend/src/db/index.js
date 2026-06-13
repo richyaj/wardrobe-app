@@ -30,6 +30,8 @@ export async function initDB() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
+    ALTER TABLE wardrobe_items ADD COLUMN IF NOT EXISTS rotation INTEGER DEFAULT 0;
+
     CREATE TABLE IF NOT EXISTS schedules (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID REFERENCES users(id) ON DELETE CASCADE UNIQUE,

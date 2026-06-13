@@ -13,7 +13,8 @@
 .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
 .card:hover .deleteBtn { display: flex; }
 
-.cardImg { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: #f0ede8; }
+.cardImgWrap { width: 100%; aspect-ratio: 1; overflow: hidden; cursor: pointer; background: #f0ede8; }
+.cardImg { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s ease; }
 .cardPlaceholder { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: #f0ede8; font-size: 36px; }
 
 .deleteBtn { position: absolute; top: 7px; right: 7px; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.92); border: 1px solid var(--border); display: none; align-items: center; justify-content: center; font-size: 12px; color: var(--danger); transition: background .15s; }
@@ -35,3 +36,17 @@
 .uploadPreview { max-width: 100%; max-height: 180px; border-radius: 6px; object-fit: contain; }
 
 .modalActions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+/* Image viewer */
+.viewerModal { background: var(--surface); border-radius: 14px; width: min(420px, 100%); overflow: hidden; display: flex; flex-direction: column; }
+.viewerHeader { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.viewerName { font-size: 14px; font-weight: 600; }
+.viewerClose { font-size: 14px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 4px 6px; }
+.viewerImgWrap { width: 100%; aspect-ratio: 1; overflow: hidden; background: #f0ede8; display: flex; align-items: center; justify-content: center; }
+.viewerImg { width: 100%; height: 100%; object-fit: contain; transition: transform .25s ease; }
+.viewerActions { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 16px; }
+.rotateBtn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+.rotateBtn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.rotateLabel { font-size: 13px; color: var(--muted); min-width: 36px; text-align: center; }
+.viewerFooter { padding: 0 16px 16px; display: flex; justify-content: center; }
+.deleteBtnViewer { font-size: 12px; color: var(--danger); background: none; border: none; cursor: pointer; padding: 4px 8px; }

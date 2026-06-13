@@ -65,7 +65,7 @@ router.delete('/:id', auth, async (req, res) => {
 
 // PATCH update item
 router.patch('/:id', auth, upload.single('image'), async (req, res) => {
-  const { name, type, color } = req.body;
+  const { name, type, color, rotation } = req.body;
   const { rows } = await pool.query(
     'SELECT * FROM wardrobe_items WHERE id=$1 AND user_id=$2',
     [req.params.id, req.user.id]
@@ -78,9 +78,10 @@ router.patch('/:id', auth, upload.single('image'), async (req, res) => {
     image_url = result.secure_url;
     image_public_id = result.public_id;
   }
+  const newRotation = rotation !== undefined ? parseInt(rotation, 10) : (rows[0].rotation ?? 0);
   const { rows: updated } = await pool.query(
-    'UPDATE wardrobe_items SET name=$1, type=$2, color=$3, image_url=$4, image_public_id=$5 WHERE id=$6 RETURNING *',
-    [name || rows[0].name, type || rows[0].type, color ?? rows[0].color, image_url, image_public_id, req.params.id]
+    'UPDATE wardrobe_items SET name=$1, type=$2, color=$3, image_url=$4, image_public_id=$5, rotation=$6 WHERE id=$7 RETURNING *',
+    [name || rows[0].name, type || rows[0].type, color ?? rows[0].color, image_url, image_public_id, newRotation, req.params.id]
   );
   res.json(updated[0]);
 });
