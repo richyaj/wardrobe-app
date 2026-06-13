@@ -1,0 +1,44 @@
+.nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 16px;
+}
+
+.logo {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -.3px;
+  white-space: nowrap;
+}
+
+.logo span { color: var(--accent); }
+
+.navLinks { display: flex; gap: 4px; }
+
+.navTab {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background .15s, color .15s;
+}
+
+.navTab:hover { background: var(--bg); color: var(--text); }
+.active { background: var(--accent-light) !important; color: var(--accent) !important; }
+
+.userArea { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.userName { font-size: 13px; color: var(--muted); white-space: nowrap; }
+
+.main { max-width: 980px; margin: 0 auto; padding: 24px 20px; }
