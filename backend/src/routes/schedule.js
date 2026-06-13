@@ -34,8 +34,8 @@ function generateScheduleLocally(tops, bottoms) {
     const groupIdx = week <= numGroups ? week - 1 : week - numGroups - 1;
     const group = groups[groupIdx];
 
-    const weekDays = days.map((day, di) => {
-      const top = group[di % group.length];
+    const weekDays = days.slice(0, group.length).map((day, di) => {
+      const top = group[di];
       const bottom = pickBottom(top.color, bottoms, recentBottomIds.slice(-3));
       recentBottomIds.push(bottom.id);
       return { day, topId: top.id, bottomId: bottom.id };
@@ -76,7 +76,8 @@ router.post('/generate', auth, async (req, res) => {
 2. Each top is worn TWICE — first wear in week N, second wear in week N+2 (always skip one week between the two wears of the same top)
 3. Pair each top with a suitable bottom based on color and formality
 4. Cover exactly ${numWeeks} weeks so all ${tops.length} tops appear exactly twice
-5. Distribute tops evenly — 5 per week
+5. Distribute tops evenly — up to 5 per week. If the total is not divisible by 5, the last week of each half will have fewer days (e.g. 4 tops → Mon–Thu only)
+6. NEVER assign the same top more than once in the same week
 
 TOPS:
 ${topsList}
