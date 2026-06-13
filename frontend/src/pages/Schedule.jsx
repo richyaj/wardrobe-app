@@ -84,7 +84,7 @@ export default function Schedule() {
               return (
                 <div key={i} className={`${styles.card} ${alreadySeen ? styles.secondWear : ''}`}>
                   {top?.image_url
-                    ? <img src={top.image_url} alt={top?.name} className={styles.cardImg} />
+                    ? <div className={styles.cardImgWrap}><img src={top.image_url} alt={top?.name} className={styles.cardImg} style={{ transform: `rotate(${top.rotation ?? 0}deg)` }} /></div>
                     : <div className={styles.cardPh}>👕</div>
                   }
                   <div className={styles.cardBody}>
