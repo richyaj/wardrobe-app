@@ -46,7 +46,36 @@ git add .
 git commit -m "initial commit"
 # Create a new repo on github.com, then:
 git remote add origin https://github.com/YOUR_USERNAME/wardrobe-app.git
+# If your local branch is named `main` (newer Git defaults)
 git push -u origin main
+
+# If your local branch is still named `master` (older repos), either push master:
+git push -u origin master
+
+# Or rename your local branch to `main` and push (recommended to match GitHub default):
+git branch -m master main
+git push -u origin main
+
+<!-- Troubleshooting: "src refspec main does not match any" -->
+### Troubleshooting
+
+If you see the error "error: src refspec main does not match any" when running `git push -u origin main`, it means your local repository doesn't have a branch named `main` (or it has no commits yet). Quick checks and fixes:
+
+1. Check your current branch and commit history:
+
+   - Run `git status` to see the current branch name.
+   - Run `git log --oneline` to verify you have at least one commit.
+
+2. If you haven't committed anything yet, create an initial commit:
+
+   git add .
+   git commit -m "initial commit"
+
+3. If your branch is `master`, push it directly or rename it to `main` as shown above.
+
+4. If you prefer not to rename branches, you can set the remote's default branch on GitHub to `master` (or push `master` and open the repo settings on GitHub).
+
+These commands and notes should work on PowerShell (Windows) or any other shell.
 ```
 
 ---
