@@ -4,44 +4,57 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
+  background: linear-gradient(145deg, #F4F2EE 0%, #EDE9F8 100%);
 }
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  width: min(400px, 100%);
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 36px;
+  width: min(420px, 100%);
+  box-shadow: var(--shadow-lg);
+  animation: fadeUp .3s ease;
 }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
 .logo {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -.3px;
-  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  margin-bottom: 24px;
 }
-.logo span { color: var(--accent); }
+.logo span {
+  background: linear-gradient(135deg, #6C3FE8, #FF7B54);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
 .title {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  letter-spacing: -.4px;
 }
 
 .error {
   background: var(--danger-light);
   color: var(--danger);
-  border: 1px solid #f0b4ae;
-  border-radius: 8px;
-  padding: 10px 12px;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  padding: 10px 14px;
   font-size: 13px;
   margin-bottom: 16px;
+  font-weight: 500;
 }
 
 .switch {
   text-align: center;
-  margin-top: 16px;
+  margin-top: 18px;
   font-size: 13px;
   color: var(--muted);
+  font-weight: 500;
 }
-.switch a { color: var(--accent); text-decoration: none; font-weight: 500; }
+.switch a { color: var(--accent); text-decoration: none; font-weight: 700; }
+.switch a:hover { text-decoration: underline; }

@@ -1,30 +1,71 @@
-.header { margin-bottom: 20px; }
-.title { font-size: 20px; font-weight: 600; }
-.date { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.header { margin-bottom: 24px; }
+.title { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+.date { font-size: 14px; color: var(--muted); margin-top: 4px; font-weight: 500; }
 
-.mainCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; }
-.sideCard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; flex: 1; }
+/* Main outfit card */
+.mainCard {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 20px; overflow: hidden; margin-bottom: 20px;
+  box-shadow: var(--shadow); transition: box-shadow .2s;
+}
+.mainCard:hover { box-shadow: var(--shadow-lg); }
 
-.cardLabel { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 10px 14px 0; }
+.cardLabel {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted); padding: 14px 18px 0;
+}
 
-.imgWrap { width: 100%; aspect-ratio: 1; overflow: hidden; background: #f0ede8; }
+.imgWrap {
+  width: 100%; aspect-ratio: 16/9; overflow: hidden;
+  background: linear-gradient(145deg, #F0EDE8, #E8E4DC);
+  position: relative;
+}
+.imgWrap::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.35) 0%, transparent 50%);
+}
 .img { width: 100%; height: 100%; object-fit: cover; }
-.imgPlaceholder { width: 100%; aspect-ratio: 1; background: #f0ede8; display: flex; align-items: center; justify-content: center; font-size: 48px; }
 
-.cardInfo { padding: 12px 14px 14px; }
-.cardName { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-.cardBot { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-.cardWeek { font-size: 11px; color: var(--muted); }
+.cardInfo { padding: 16px 18px 20px; }
+.cardName { font-size: 18px; font-weight: 800; margin-bottom: 5px; letter-spacing: -.3px; }
+.cardBot { font-size: 14px; color: var(--muted); margin-bottom: 6px; font-weight: 500; }
+.cardWeek {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  background: var(--accent-light); color: var(--accent);
+  padding: 4px 10px; border-radius: 20px;
+}
 
+/* Side cards */
+.sideCard {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 16px; overflow: hidden; flex: 1;
+  box-shadow: var(--shadow-sm); transition: all .2s ease;
+}
+.sideCard:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 .sideCard .imgWrap { aspect-ratio: 1; }
-.sideCard .cardName { font-size: 12px; }
-.sideCard .cardBot { font-size: 11px; }
+.sideCard .imgWrap::after { display: none; }
+.sideCard .cardInfo { padding: 10px 12px 12px; }
+.sideCard .cardName { font-size: 13px; font-weight: 700; margin-bottom: 3px; letter-spacing: -.1px; }
+.sideCard .cardBot { font-size: 11px; margin-bottom: 4px; }
+.sideCard .cardWeek { font-size: 10px; }
+.sideCard .cardLabel { font-size: 10px; padding: 10px 12px 0; }
 
-.navRow { display: flex; gap: 12px; }
+.imgPlaceholder {
+  width: 100%; aspect-ratio: 1; background: linear-gradient(145deg, #F0EDE8, #E8E4DC);
+  display: flex; align-items: center; justify-content: center; font-size: 48px;
+}
+
+.navRow { display: flex; gap: 14px; }
 .navItem { flex: 1; }
 
-.weekend { text-align: center; padding: 40px 20px 20px; }
-.weekendIcon { font-size: 48px; margin-bottom: 12px; }
-.weekendTitle { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-.weekendSub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
-.previewWrap { max-width: 280px; margin: 0 auto; }
+/* Weekend */
+.weekend {
+  text-align: center; padding: 48px 20px 28px;
+  background: var(--surface); border-radius: 20px;
+  border: 1.5px solid var(--border); box-shadow: var(--shadow);
+}
+.weekendIcon { font-size: 56px; margin-bottom: 14px; }
+.weekendTitle { font-size: 22px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.4px; }
+.weekendSub { font-size: 14px; color: var(--muted); margin-bottom: 28px; font-weight: 500; }
+.previewWrap { max-width: 260px; margin: 0 auto; }

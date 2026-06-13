@@ -114,6 +114,7 @@ export default function Wardrobe() {
                       className={styles.cardImg}
                       style={{ transform: `rotate(${item.rotation ?? 0}deg)` }}
                     />
+                    <div className={styles.rotateHint}>tap to rotate</div>
                   </div>
                 )
                 : <div className={styles.cardPlaceholder}>👕</div>

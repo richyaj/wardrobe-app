@@ -1,11 +1,11 @@
 .nav {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 20px;
+  background: #111111;
+  border-bottom: none;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 52px;
+  height: 58px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -13,32 +13,41 @@
 }
 
 .logo {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: -.3px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.5px;
   white-space: nowrap;
+  color: #fff;
 }
 
-.logo span { color: var(--accent); }
+.logo span {
+  background: linear-gradient(135deg, #9B72F8, #FF7B54);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-.navLinks { display: flex; gap: 4px; }
+.navLinks { display: flex; gap: 2px; }
 
 .navTab {
   padding: 6px 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
   background: none;
-  color: var(--muted);
+  color: #888;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   transition: background .15s, color .15s;
+  letter-spacing: -.01em;
 }
 
-.navTab:hover { background: var(--bg); color: var(--text); }
-.active { background: var(--accent-light) !important; color: var(--accent) !important; }
+.navTab:hover { background: rgba(255,255,255,.08); color: #fff; }
+.active { background: rgba(255,255,255,.12) !important; color: #fff !important; }
 
 .userArea { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-.userName { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.userName {
+  font-size: 13px; color: #666; white-space: nowrap; font-weight: 500;
+}
 
-.main { max-width: 980px; margin: 0 auto; padding: 24px 20px; }
+.main { max-width: 980px; margin: 0 auto; padding: 28px 20px; }
