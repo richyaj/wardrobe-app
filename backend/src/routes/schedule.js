@@ -72,10 +72,18 @@ router.get('/', auth, async (req, res) => {
 
 router.patch('/start', auth, async (req, res) => {
   const { startWeekIdx } = req.body;
+  // Anchor to Monday of the current week so schedule always aligns to Mon-Fri
+  const today = new Date();
+  const dow = today.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+  const daysBack = dow === 0 ? 6 : dow - 1;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - daysBack);
+  const mondayStr = monday.toISOString().split('T')[0];
+
   const { rows } = await pool.query(
-    `UPDATE schedules SET start_date = CURRENT_DATE, start_week_idx = $1
-     WHERE user_id = $2 RETURNING start_date, start_week_idx`,
-    [startWeekIdx ?? 0, req.user.id]
+    `UPDATE schedules SET start_date = $1, start_week_idx = $2
+     WHERE user_id = $3 RETURNING start_date, start_week_idx`,
+    [mondayStr, startWeekIdx ?? 0, req.user.id]
   );
   if (!rows[0]) return res.status(404).json({ error: 'No schedule found. Generate one first.' });
   res.json({ startDate: rows[0].start_date, startWeekIdx: rows[0].start_week_idx });
