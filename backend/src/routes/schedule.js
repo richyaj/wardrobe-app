@@ -4,7 +4,48 @@ import { pool } from '../db/index.js';
 import { auth } from '../middleware/auth.js';
 
 const router = express.Router();
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const NEUTRAL_COLORS = new Set(['black', 'white', 'grey', 'gray', 'navy', 'beige', 'brown', 'tan', 'cream', 'charcoal']);
+
+function pickBottom(topColor, bottoms, recentIds) {
+  const tc = (topColor || '').toLowerCase();
+  return bottoms
+    .map(b => {
+      const bc = (b.color || '').toLowerCase();
+      let score = 0;
+      if (!recentIds.includes(b.id)) score += 10;
+      if (NEUTRAL_COLORS.has(bc)) score += 5;
+      if (bc && bc === tc) score += 3;
+      return { b, score };
+    })
+    .sort((a, b) => b.score - a.score)[0].b;
+}
+
+function generateScheduleLocally(tops, bottoms) {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const numGroups = Math.ceil(tops.length / 5);
+  const numWeeks = numGroups * 2;
+  const groups = Array.from({ length: numGroups }, (_, i) => tops.slice(i * 5, i * 5 + 5));
+
+  const schedule = [];
+  const recentBottomIds = [];
+
+  for (let week = 1; week <= numWeeks; week++) {
+    const groupIdx = week <= numGroups ? week - 1 : week - numGroups - 1;
+    const group = groups[groupIdx];
+
+    const weekDays = days.map((day, di) => {
+      const top = group[di % group.length];
+      const bottom = pickBottom(top.color, bottoms, recentBottomIds.slice(-3));
+      recentBottomIds.push(bottom.id);
+      return { day, topId: top.id, bottomId: bottom.id };
+    });
+
+    schedule.push({ weekNum: week, days: weekDays });
+  }
+
+  return schedule;
+}
 
 router.get('/', auth, async (req, res) => {
   const { rows } = await pool.query('SELECT data FROM schedules WHERE user_id=$1', [req.user.id]);
@@ -22,11 +63,15 @@ router.post('/generate', auth, async (req, res) => {
   if (tops.length < 5) return res.status(400).json({ error: 'Add at least 5 tops to generate a schedule' });
   if (bottoms.length < 1) return res.status(400).json({ error: 'Add at least 1 bottom to generate a schedule' });
 
-  const topsList = tops.map(t => `ID:${t.id} | ${t.name} | type:${t.type} | color:${t.color || 'unspecified'}`).join('\n');
-  const bottomsList = bottoms.map(b => `ID:${b.id} | ${b.name} | color:${b.color || 'unspecified'}`).join('\n');
-  const numWeeks = Math.ceil(tops.length / 5) * 2;
+  let data;
 
-  const prompt = `You are a wardrobe organizer. Create an office outfit schedule following these rules:
+  if (process.env.ANTHROPIC_API_KEY) {
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const topsList = tops.map(t => `ID:${t.id} | ${t.name} | type:${t.type} | color:${t.color || 'unspecified'}`).join('\n');
+    const bottomsList = bottoms.map(b => `ID:${b.id} | ${b.name} | color:${b.color || 'unspecified'}`).join('\n');
+    const numWeeks = Math.ceil(tops.length / 5) * 2;
+
+    const prompt = `You are a wardrobe organizer. Create an office outfit schedule following these rules:
 1. Office days: Monday to Friday (5 days per week)
 2. Each top is worn TWICE — first wear in week N, second wear in week N+2 (always skip one week between the two wears of the same top)
 3. Pair each top with a suitable bottom based on color and formality
@@ -53,14 +98,17 @@ Return ONLY a valid JSON array, no markdown fences, no explanation:
   }
 ]`;
 
-  const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 4096,
-    messages: [{ role: 'user', content: prompt }]
-  });
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      messages: [{ role: 'user', content: prompt }]
+    });
 
-  const text = message.content[0].text.replace(/```json|```/g, '').trim();
-  const data = JSON.parse(text);
+    const text = message.content[0].text.replace(/```json|```/g, '').trim();
+    data = JSON.parse(text);
+  } else {
+    data = generateScheduleLocally(tops, bottoms);
+  }
 
   await pool.query(
     `INSERT INTO schedules (user_id, data) VALUES ($1,$2)
