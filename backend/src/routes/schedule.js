@@ -63,9 +63,18 @@ router.get('/', auth, async (req, res) => {
     [req.user.id]
   );
   if (!rows[0]) return res.json({ schedule: null, startDate: null, startWeekIdx: 0 });
+  // Always return Monday of the start week, even if an older record saved a weekend date
+  let startDate = rows[0].start_date;
+  if (startDate) {
+    const d = new Date(startDate);
+    const dow = d.getUTCDay();
+    const daysBack = dow === 0 ? 6 : dow - 1;
+    d.setUTCDate(d.getUTCDate() - daysBack);
+    startDate = d.toISOString().split('T')[0];
+  }
   res.json({
     schedule: rows[0].data,
-    startDate: rows[0].start_date,
+    startDate,
     startWeekIdx: rows[0].start_week_idx ?? 0
   });
 });
